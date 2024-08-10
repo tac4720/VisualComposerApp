@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, Dimensions, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Audio } from 'expo-av';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
@@ -47,7 +47,8 @@ const App = () => {
   const [confirmedKey, setConfirmedKey] = useState(false);
   const [roleKey, setRolekey] = useState(false);
   const [sound, setSound] = useState(null);
-
+  const [highlightedNotes, setHighlightedNotes] = useState([]);
+  const timerRef = useRef(null);
 
   const getScaleNotes = (key) => {
     const keyIndex = notes.findIndex(note => note.note === key);
@@ -109,6 +110,43 @@ const App = () => {
     }
   };
 
+  const get_constituents = (note) => {
+    const keyIndex = notes.findIndex(n => n.note === note);
+
+    if (!selectedKey) return false;
+    const scaleNotes = getScaleNotes(selectedKey);
+    const index = scaleNotes.indexOf(note);
+    if (scaleType === 'major') {
+      
+      if (index == 1 || index == 2 || index == 5){
+        return [0, 3, 7].map(interval => 
+        notes[(keyIndex + interval) % 12].note
+      );
+       }
+      else{
+        return [0, 4, 7].map(interval => 
+        notes[(keyIndex + interval) % 12].note
+      );
+      }
+    }
+    else if (scaleType === 'minor') {
+      if (index == 0 || index == 2 || index == 4){
+        return [0, 3, 7].map(interval => 
+        notes[(keyIndex + interval) % 12].note
+      );
+      }
+      else{
+       return [0, 4, 7].map(interval => 
+        notes[(keyIndex + interval) % 12].note
+      );
+      }
+    }
+  };
+
+  const is_note_in_constituent = (note) => {
+     return highlightedNotes.includes(note); 
+  };
+
   const playSound = async (note) => {
     if (sound) {
       await sound.unloadAsync();
@@ -116,13 +154,36 @@ const App = () => {
     const { sound: newSound } = await Audio.Sound.createAsync(getchord(note));
     setSound(newSound);
     await newSound.playAsync();
-  };
+    
+    const constituents = get_constituents(note);
+    setHighlightedNotes(constituents);
+  if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      console.log("Timer cleared");
+    }
+
+    // 新しいタイマーを設定
+    timerRef.current = setTimeout(() => {
+      setHighlightedNotes([]);
+      console.log("Highlighted notes cleared");
+    }, 2000); // 2000ms (2秒)
+  }
 
   const getNoteBackgroundColor = (note) => {
     if (selectedKey === note || isNoteInScale(note)) {
       return notes.find(n => n.note === note)?.color || '#FFF';
     }
     return '#333'; // Dark color for non-selected notes
+  };
+
+  const getborderColor = (note) => {
+    if (highlightedNotes.includes(note)) {
+      return '#FFFF00'; // Highlight color for constituents
+    }
+    if (selectedKey === note || isNoteInScale(note)) {
+      return '#FFF'; // Light color for selected notes
+    }
+    return '#FFF'; // Dark color for non-selected notes
   };
 
   const confirmKey = () => {
@@ -189,8 +250,8 @@ const App = () => {
                     { translateY: y },
                   ],
                   backgroundColor: getNoteBackgroundColor(note.note),
-                  borderWidth: selectedKey === note.note || isNoteInScale(note.note) ? 4 : 0,
-                  borderColor: '#FFF',
+                  borderColor: getborderColor(note.note),
+                  borderWidth: selectedKey === note.note || isNoteInScale(note.note) || is_note_in_constituent(note.note) ? 4 : 0,
                 },
               ]}
                onPress={() => {
@@ -198,6 +259,7 @@ const App = () => {
                   setSelectedKey(note.note);
                 }
                 if (confirmedKey) {
+                
                 playSound(note.note); // confirmedKey が true のときのみ音を鳴らす
                 }
               }}    
