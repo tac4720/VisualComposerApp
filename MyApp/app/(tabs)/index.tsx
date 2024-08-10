@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, SafeAreaView, TouchableOpacity } from 'react-native';
+import { Audio } from 'expo-av';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 const { width, height } = Dimensions.get('window');
-const radius = width * 0.4; // Adjusted radius
+
+const radius = width * 0.4;
 
 const notes = [
   { note: 'C', color: '#FF6B6B' },
@@ -19,10 +22,32 @@ const notes = [
   { note: 'B', color: '#FF8066' },
 ];
 
+
+const sounds = {
+  'C': require('../../assets/sounds/C.wav'),
+  'Cm': require('../../assets/sounds/Cm.wav'),
+  'D': require('../../assets/sounds/D-1.wav'),
+  'Dm': require('../../assets/sounds/Dm.wav'),
+  'E': require('../../assets/sounds/E.wav'),
+  'Em': require('../../assets/sounds/Em.wav'),
+  'F': require('../../assets/sounds/F.wav'),
+  'Fm': require('../../assets/sounds/Fm.wav'),
+  'G': require('../../assets/sounds/G.wav'),
+  'Gm': require('../../assets/sounds/Gm.wav'),
+  'A': require('../../assets/sounds/A.wav'),
+  'Am': require('../../assets/sounds/Am.wav'),
+  'B': require('../../assets/sounds/B.wav'),
+  'Bm': require('../../assets/sounds/Bm.wav'),
+};
+
+
 const App = () => {
   const [selectedKey, setSelectedKey] = useState('C');
   const [scaleType, setScaleType] = useState('major');
   const [confirmedKey, setConfirmedKey] = useState(false);
+  const [roleKey, setRolekey] = useState(false);
+  const [sound, setSound] = useState(null);
+
 
   const getScaleNotes = (key) => {
     const keyIndex = notes.findIndex(note => note.note === key);
@@ -61,6 +86,38 @@ const App = () => {
     }
   };
 
+  const getchord = (note) => {
+    if (!selectedKey) return false;
+    const scaleNotes = getScaleNotes(selectedKey);
+    const index = scaleNotes.indexOf(note);
+    if (scaleType === 'major') {
+      
+      if (index == 1 || index == 2 || index == 5){
+        return sounds[note + "m"];
+      }
+      else{
+        return sounds[note];
+      }
+    }
+    else if (scaleType === 'minor') {
+      if (index == 0 || index == 2 || index == 4){
+        return sounds[note + "m"];
+      }
+      else{
+        return sounds[note];
+      }
+    }
+  };
+
+  const playSound = async (note) => {
+    if (sound) {
+      await sound.unloadAsync();
+    }
+    const { sound: newSound } = await Audio.Sound.createAsync(getchord(note));
+    setSound(newSound);
+    await newSound.playAsync();
+  };
+
   const getNoteBackgroundColor = (note) => {
     if (selectedKey === note || isNoteInScale(note)) {
       return notes.find(n => n.note === note)?.color || '#FFF';
@@ -70,6 +127,10 @@ const App = () => {
 
   const confirmKey = () => {
     setConfirmedKey(prevState => !prevState);
+  };
+
+  const rolekey = () => {
+    setRolekey(prevState => !prevState);
   };
 
   return (
@@ -82,6 +143,15 @@ const App = () => {
       >
         <Text style={[styles.confirmButtonText, confirmedKey && styles.confirmedButtonText]}>
           {confirmedKey ? 'Confirm' : 'Confirm'}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.roleKeyButton, roleKey && styles.roleKeyButton]}
+        onPress={rolekey}
+      >
+        <Text style={[styles.roleButtonText, roleKey && styles.roleButtonText]}>
+          {roleKey ? 'Role' : 'Role'}
         </Text>
       </TouchableOpacity>
 
@@ -123,10 +193,17 @@ const App = () => {
                   borderColor: '#FFF',
                 },
               ]}
-              onPress={() => setSelectedKey(note.note)}
-              disabled={confirmedKey}
+               onPress={() => {
+                if (!confirmedKey){
+                  setSelectedKey(note.note);
+                }
+                if (confirmedKey) {
+                playSound(note.note); // confirmedKey が true のときのみ音を鳴らす
+                }
+              }}    
+              //disabled={confirmedKey}
             >
-              <Text style={styles.noteText}>{confirmedKey ? getNoteRole(note.note) : note.note}</Text>
+              <Text style={styles.noteText}>{roleKey ? getNoteRole(note.note) : note.note}</Text>
             </TouchableOpacity>
           );
         })}
@@ -323,7 +400,26 @@ const styles = StyleSheet.create({
   confirmedButtonText: {
     color: '#000',
   },
-});
+  roleKeyButton: {
+    position: 'absolute',
+    top: 80,
+    right: 20,
+    backgroundColor: '#f44336',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  roleKeyButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+}
+);
 
 export default App;
 
