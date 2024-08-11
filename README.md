@@ -27,9 +27,15 @@ Visual Composer Appは、音楽理論の知識が少ない人でも直感的に�
 
 現在、このプロジェクトは開発段階にあります。以下の手順でローカル環境にセットアップできます：
 
+必要なツール
+
+- git
+- Node.js
+
 ```bash
 git clone https://github.com/tac4720/visualcomposerapp.git
 cd visualcomposerapp
+cd Myapp
 
 npm install
 npm install -g expo-cli
@@ -95,6 +101,10 @@ Visual Composer App is an innovative application that allows users to compose mu
 
 This project is currently in the development stage. You can set it up in your local environment with the following steps:
 
+required tools
+
+- git
+- Node.js
 
 ```bash
 git clone https://github.com/tac4720/visualcomposerapp.git
