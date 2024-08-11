@@ -36,13 +36,7 @@ Visual Composer Appは、音楽理論の知識が少ない人でも直感的に�
 git clone https://github.com/tac4720/visualcomposerapp.git
 cd visualcomposerapp
 cd Myapp
-
-npm install
-npm install -g expo-cli
-npm start 
-
-or
-
+npm install yarn
 npx expo start
 ```
 
@@ -109,13 +103,7 @@ required tools
 ```bash
 git clone https://github.com/tac4720/visualcomposerapp.git
 cd visualcomposerapp
-
-npm install
-npm install -g expo-cli
-npm start 
-
-or
-
+npm install yarn
 npx expo start
 
 ```
