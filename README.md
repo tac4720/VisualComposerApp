@@ -28,10 +28,16 @@ Visual Composer Appは、音楽理論の知識が少ない人でも直感的に�
 現在、このプロジェクトは開発段階にあります。以下の手順でローカル環境にセットアップできます：
 
 ```bash
-git clone https://github.com/yourusername/visual-composer-app.git
-cd visual-composer-app
+git clone https://github.com/tac4720/visualcomposerapp.git
+cd visualcomposerapp
+
 npm install
-npm start
+npm install -g expo-cli
+npm start 
+
+or
+
+npx expo start
 ```
 
 ### 使用方法
@@ -89,13 +95,20 @@ Visual Composer App is an innovative application that allows users to compose mu
 
 This project is currently in the development stage. You can set it up in your local environment with the following steps:
 
-```bash
-git clone https://github.com/yourusername/visual-composer-app.git
-cd visual-composer-app
-npm install
-npm start
-```
 
+```bash
+git clone https://github.com/tac4720/visualcomposerapp.git
+cd visualcomposerapp
+
+npm install
+npm install -g expo-cli
+npm start 
+
+or
+
+npx expo start
+
+```
 ### Usage
 
 1. Launch the app and select the scale you want to use.
