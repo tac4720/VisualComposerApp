@@ -42,10 +42,11 @@ const sounds = {
 
 
 const App = () => {
+  const roles = ['Mode One', 'Mode Two', 'Mode Three'];
   const [selectedKey, setSelectedKey] = useState('C');
   const [scaleType, setScaleType] = useState('major');
   const [confirmedKey, setConfirmedKey] = useState(false);
-  const [roleKey, setRolekey] = useState(false);
+  const [roleKey, setRolekey] = useState(0);
   const [sound, setSound] = useState(null);
   const [highlightedNotes, setHighlightedNotes] = useState([]);
   const timerRef = useRef(null);
@@ -86,6 +87,18 @@ const App = () => {
       return "S";
     }
   };
+
+  const getDegree = (note) => {
+    if (!selectedKey) return false;
+    const scaleNotes = getScaleNotes(selectedKey);
+    //リストの何番目にnoteがあるか
+    index = scaleNotes.indexOf(note);
+    index = index + 1;
+    if (index == 0){
+      return "";
+    }
+    return index.toString();
+  }
 
   const getchord = (note) => {
     if (!selectedKey) return false;
@@ -191,8 +204,8 @@ const App = () => {
   };
 
   const rolekey = () => {
-    setRolekey(prevState => !prevState);
-  };
+    setRolekey(prevIndex => (prevIndex + 1) % roles.length);
+    };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -265,7 +278,14 @@ const App = () => {
               }}    
               //disabled={confirmedKey}
             >
-              <Text style={styles.noteText}>{roleKey ? getNoteRole(note.note) : note.note}</Text>
+
+  <Text style={styles.noteText}>
+    {roleKey === 0 
+      ? note.note 
+      : roleKey === 1 
+        ? getDegree(note.note) 
+        : getNoteRole(note.note)}
+  </Text>
             </TouchableOpacity>
           );
         })}
@@ -332,6 +352,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    bottom: 80,
   },
   noteText: {
     color: '#000',
@@ -346,10 +367,11 @@ const styles = StyleSheet.create({
     borderRadius: radius,
     borderColor: 'rgba(255,255,255,0.3)',
     borderWidth: 2,
+    bottom: -50,
   },
   keyInfoContainer: {
     position: 'absolute',
-    top: 20,
+    top: 60,
     left: 0,
     right: 0,
     padding: 10,
@@ -401,7 +423,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 20,
     position: 'absolute',
-    bottom: 20,
+    bottom: 40,
   },
   bpmLabel: {
     color: '#fff',
@@ -417,7 +439,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     position: 'absolute',
-    bottom: 150,
+    bottom: 200,
     left: 0,
     right: 0,
     paddingHorizontal: 20,
@@ -440,7 +462,7 @@ const styles = StyleSheet.create({
   },
   confirmKeyButton: {
     position: 'absolute',
-    top: 80,
+    top: 120,
     left: 20,
     backgroundColor: '#4CAF50',
     paddingVertical: 10,
@@ -464,7 +486,7 @@ const styles = StyleSheet.create({
   },
   roleKeyButton: {
     position: 'absolute',
-    top: 80,
+    top: 120,
     right: 20,
     backgroundColor: '#f44336',
     paddingVertical: 10,
