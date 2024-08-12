@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, Dimensions, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, SafeAreaView, TouchableOpacity, PanResponder, Animated } from 'react-native';
 import { Audio } from 'expo-av';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
@@ -60,6 +60,40 @@ const App = () => {
   const [sound, setSound] = useState(null);
   const [highlightedNotes, setHighlightedNotes] = useState([]);
   const timerRef = useRef(null);
+
+  const [draggedNote, setDraggedNote] = useState(null);
+  const [dragDistance, setDragDistance] = useState(0);
+
+  const panResponders = useRef(notes.map(() => createPanResponder())).current;
+
+  function createPanResponder() {
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (event, gestureState) => {
+        const distance = Math.sqrt(gestureState.dx * gestureState.dx + gestureState.dy * gestureState.dy);
+        setDragDistance(distance);
+      },
+      onPanResponderRelease: (event, gestureState) => {
+        const distance = Math.sqrt(gestureState.dx * gestureState.dx + gestureState.dy * gestureState.dy);
+        handleDragRelease(distance);
+        setDraggedNote(null);
+        setDragDistance(0);
+      },
+    });
+  }
+
+  const handleDragRelease = (distance) => {
+    if (distance < 50) {
+      // Short drag: Play note
+      playSound(draggedNote);
+    } else if (distance < 100) {
+      // Medium drag: Select key
+      setSelectedKey(draggedNote);
+    } else {
+      // Long drag: Toggle scale type
+      setScaleType(prevType => prevType === 'major' ? 'minor' : 'major');
+    }
+  };
 
   const getScaleNotes = (key) => {
     const keyIndex = notes.findIndex(note => note.note === key);
