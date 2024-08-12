@@ -52,7 +52,7 @@ const sounds = {
 
 
 const App = () => {
-  const roles = ['Mode One', 'Mode Two', 'Mode Three'];
+  const roles = ['Mode One', 'Mode Two', 'Mode Three', 'Mode Four'];
   const [selectedKey, setSelectedKey] = useState('C');
   const [scaleType, setScaleType] = useState('major');
   const [confirmedKey, setConfirmedKey] = useState(false);
@@ -108,6 +108,15 @@ const App = () => {
       return "";
     }
     return index.toString();
+  }
+
+  const getdoremi = (note) => {
+    if (!selectedKey) return false;
+    const doremi =
+      ['ド', 'ド#', 'レ', 'レ#', 'ミ', 'ファ', 'ファ#', 'ソ', 'ソ#', 'ラ', 'ラ#', 'シ'];
+    //リストの何番目にnoteがあるか
+  index = notes.findIndex(n => n.note === note);
+    return doremi[index];
   }
 
   const getchord = (note) => {
@@ -294,7 +303,10 @@ const App = () => {
       ? note.note 
       : roleKey === 1 
         ? getDegree(note.note) 
-        : getNoteRole(note.note)}
+        : roleKey === 2
+          ? getNoteRole(note.note)
+          : getdoremi(note.note)}
+
   </Text>
             </TouchableOpacity>
           );
