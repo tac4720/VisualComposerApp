@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, SafeAreaView, TouchableOpacity, PanResponder, Animated } from 'react-native';
 import { Audio } from 'expo-av';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
@@ -22,34 +22,80 @@ const notes = [
   { note: 'B', color: '#FF8066' },
 ];
 
-
 const sounds = {
-  'C': require('../../assets/sounds/C.wav'),
-  'C#-Db': require('../../assets/sounds/C#-Db.wav'),
-  'Cm': require('../../assets/sounds/Cm.wav'),
-  'C#-Dbm': require('../../assets/sounds/C#-Dbm.wav'),
-  'D': require('../../assets/sounds/D-1.wav'),
-  'D#-Eb': require('../../assets/sounds/D#-Eb.wav'),
-  'Dm': require('../../assets/sounds/Dm.wav'),
-  'D#-Ebm': require('../../assets/sounds/D#-Ebm.wav'),
-  'E': require('../../assets/sounds/E.wav'),
-  'Em': require('../../assets/sounds/Em.wav'),
-  'F': require('../../assets/sounds/F.wav'),
-  'F#-Gb': require('../../assets/sounds/F#-Gb.wav'),
-  'Fm': require('../../assets/sounds/Fm.wav'),
-  'F#-Gbm': require('../../assets/sounds/F#-Gbm.wav'),
-  'G': require('../../assets/sounds/G.wav'),
-  'G#-Ab': require('../../assets/sounds/G#-Ab.wav'),
-  'Gm': require('../../assets/sounds/Gm.wav'),
-  'G#-Abm': require('../../assets/sounds/G#-Abm.wav'),
-  'A': require('../../assets/sounds/A.wav'),
   'A#-Bb': require('../../assets/sounds/A#-Bb.wav'),
-  'Am': require('../../assets/sounds/Am.wav'),
+  'A#-Bb7': require('../../assets/sounds/A#-Bb7.wav'),
+  'A#-Bbadd9': require('../../assets/sounds/A#-Bbadd9.wav'),
   'A#-Bbm': require('../../assets/sounds/A#-Bbm.wav'),
+  'A#-BbM7': require('../../assets/sounds/A#-BbM7.wav'),
+  'A#-Bbsus4': require('../../assets/sounds/A#-Bbsus4.wav'),
+  'A': require('../../assets/sounds/A.wav'),
+  'A7': require('../../assets/sounds/A7.wav'),
+  'Aadd9': require('../../assets/sounds/Aadd9.wav'),
+  'Am': require('../../assets/sounds/Am.wav'),
+  'AM7': require('../../assets/sounds/AM7.wav'),
+  'Asus4': require('../../assets/sounds/Asus4.wav'),
   'B': require('../../assets/sounds/B.wav'),
+  'B7': require('../../assets/sounds/B7.wav'),
+  'Badd9': require('../../assets/sounds/Badd9.wav'),
   'Bm': require('../../assets/sounds/Bm.wav'),
+  'BM7': require('../../assets/sounds/BM7.wav'),
+  'Bsus4': require('../../assets/sounds/Bsus4.wav'),
+  'C#-Db': require('../../assets/sounds/C#-Db.wav'),
+  'C#-Db7': require('../../assets/sounds/C#-Db7.wav'),
+  'C#-Dbadd9': require('../../assets/sounds/C#-Dbadd9.wav'),
+  'C#-Dbm': require('../../assets/sounds/C#-Dbm.wav'),
+  'C#-DbM7': require('../../assets/sounds/C#-DbM7.wav'),
+  'C#-Dbsus4': require('../../assets/sounds/C#-Dbsus4.wav'),
+  'C': require('../../assets/sounds/C.wav'),
+  'C7': require('../../assets/sounds/C7.wav'),
+  'Cadd9': require('../../assets/sounds/Cadd9.wav'),
+  'Cm': require('../../assets/sounds/Cm.wav'),
+  'CM7': require('../../assets/sounds/CM7.wav'),
+  'Csus4': require('../../assets/sounds/Csus4.wav'),
+  'D#-Eb': require('../../assets/sounds/D#-Eb.wav'),
+  'D#-Eb7': require('../../assets/sounds/D#-Eb7.wav'),
+  'D#-Ebadd9': require('../../assets/sounds/D#-Ebadd9.wav'),
+  'D#-Ebm': require('../../assets/sounds/D#-Ebm.wav'),
+  'D#-EbM7': require('../../assets/sounds/D#-EbM7.wav'),
+  'D#-Ebsus4': require('../../assets/sounds/D#-Ebsus4.wav'),
+  'D': require('../../assets/sounds/D-1.wav'),
+  'D7': require('../../assets/sounds/D7.wav'),
+  'Dadd9': require('../../assets/sounds/Dadd9.wav'),
+  'Dm': require('../../assets/sounds/Dm.wav'),
+  'DM7': require('../../assets/sounds/DM7.wav'),
+  'Dsus4': require('../../assets/sounds/Dsus4.wav'),
+  'E': require('../../assets/sounds/E.wav'),
+  'E7': require('../../assets/sounds/E7.wav'),
+  'Eadd9': require('../../assets/sounds/Eadd9.wav'),
+  'Em': require('../../assets/sounds/Em.wav'),
+  'EM7': require('../../assets/sounds/EM7.wav'),
+  'Esus4': require('../../assets/sounds/Esus4.wav'),
+  'F#-Gb': require('../../assets/sounds/F#-Gb.wav'),
+  'F#-Gb7': require('../../assets/sounds/F#-Gb7.wav'),
+  'F#-Gbadd9': require('../../assets/sounds/F#-Gbadd9.wav'),
+  'F#-Gbm': require('../../assets/sounds/F#-Gbm.wav'),
+  'F#-GbM7': require('../../assets/sounds/F#-GbM7.wav'),
+  'F#-Gbsus4': require('../../assets/sounds/F#-Gbsus4.wav'),
+  'F': require('../../assets/sounds/F.wav'),
+  'F7': require('../../assets/sounds/F7.wav'),
+  'Fadd9': require('../../assets/sounds/Fadd9.wav'),
+  'Fm': require('../../assets/sounds/Fm.wav'),
+  'FM7': require('../../assets/sounds/FM7.wav'),
+  'Fsus4': require('../../assets/sounds/Fsus4.wav'),
+  'G#-Ab': require('../../assets/sounds/G#-Ab.wav'),
+  'G#-Ab7': require('../../assets/sounds/G#-Ab7.wav'),
+  'G#-Abadd9': require('../../assets/sounds/G#-Abadd9.wav'),
+  'G#-Abm': require('../../assets/sounds/G#-Abm.wav'),
+  'G#-AbM7': require('../../assets/sounds/G#-AbM7.wav'),
+  'G#-Absus4': require('../../assets/sounds/G#-Absus4-1.wav'),
+  'G': require('../../assets/sounds/G.wav'),
+  'G7': require('../../assets/sounds/G7.wav'),
+  'Gadd9': require('../../assets/sounds/Gadd9.wav'),
+  'Gm': require('../../assets/sounds/Gm.wav'),
+  'GM7': require('../../assets/sounds/GM7.wav'),
+  'Gsus4': require('../../assets/sounds/Gsus4-1.wav'),
 };
-
 
 const App = () => {
   const roles = ['Mode One', 'Mode Two', 'Mode Three', 'Mode Four'];
@@ -60,40 +106,61 @@ const App = () => {
   const [sound, setSound] = useState(null);
   const [highlightedNotes, setHighlightedNotes] = useState([]);
   const timerRef = useRef(null);
-
-  const [draggedNote, setDraggedNote] = useState(null);
+  const [draggedNote, setDraggedNote] = useState('');
   const [dragDistance, setDragDistance] = useState(0);
+  const panResponders = useRef(notes.map(note => createPanResponder(note.note))).current;
 
-  const panResponders = useRef(notes.map(() => createPanResponder())).current;
+  const dragDistanceRef = useRef(dragDistance);
+  const confirmedKeyRef = useRef(confirmedKey);
 
-  function createPanResponder() {
-    return PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (event, gestureState) => {
-        const distance = Math.sqrt(gestureState.dx * gestureState.dx + gestureState.dy * gestureState.dy);
-        setDragDistance(distance);
-      },
-      onPanResponderRelease: (event, gestureState) => {
-        const distance = Math.sqrt(gestureState.dx * gestureState.dx + gestureState.dy * gestureState.dy);
-        handleDragRelease(distance);
-        setDraggedNote(null);
-        setDragDistance(0);
-      },
-    });
-  }
-
-  const handleDragRelease = (distance) => {
-    if (distance < 50) {
-      // Short drag: Play note
-      playSound(draggedNote);
-    } else if (distance < 100) {
-      // Medium drag: Select key
-      setSelectedKey(draggedNote);
-    } else {
-      // Long drag: Toggle scale type
-      setScaleType(prevType => prevType === 'major' ? 'minor' : 'major');
+  useEffect(() => {
+    if (draggedNote) {
+      console.log(`Dragged Note: ${draggedNote}`);
     }
-  };
+
+    if (dragDistance > 0) {
+      console.log(`Drag Distance: ${dragDistance}`);
+    }
+    dragDistanceRef.current = dragDistance;
+    confirmedKeyRef.current = confirmedKey;
+  }, [draggedNote, dragDistance, confirmedKey]);
+
+function createPanResponder(note) {
+    return PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onPanResponderGrant: () => {
+          console.log(note);
+          setDraggedNote(note);
+        },
+        onPanResponderMove: (event, gestureState) => {
+            const distance = Math.sqrt(gestureState.dx * gestureState.dx + gestureState.dy * gestureState.dy);
+            setDragDistance(distance);
+        },
+        onPanResponderRelease: () => {
+          const distance = dragDistanceRef.current;
+          const confirmed = confirmedKeyRef.current;
+            console.log(`Distance: ${distance}`);
+            if (confirmed){
+              let result;
+              if (distance < 50) {
+              result = note;
+              } else if (distance < 100) {
+              result = note + '7';
+              } else if (distance < 150) {
+              result = note + 'add9';
+              } else {
+                result = note + 'sus4';
+              }
+              console.log('Note:', result);
+              playSound(result);
+            }
+            else{
+              setSelectedKey(note);
+            }
+            setDraggedNote('');
+        },
+    });
+}
 
   const getScaleNotes = (key) => {
     const keyIndex = notes.findIndex(note => note.note === key);
@@ -119,7 +186,6 @@ const App = () => {
   const getNoteRole = (note) => {
     if (!selectedKey) return false;  
     const scaleNotes = getScaleNotes(selectedKey);
-    //リストの何番目にnoteがあるか
     const index = scaleNotes.indexOf(note);
     if (index == 0 || index == 2 || index == 5){
       return "T";
@@ -135,7 +201,6 @@ const App = () => {
   const getDegree = (note) => {
     if (!selectedKey) return false;
     const scaleNotes = getScaleNotes(selectedKey);
-    //リストの何番目にnoteがあるか
     index = scaleNotes.indexOf(note);
     index = index + 1;
     if (index == 0){
@@ -148,8 +213,7 @@ const App = () => {
     if (!selectedKey) return false;
     const doremi =
       ['ド', 'ド#', 'レ', 'レ#', 'ミ', 'ファ', 'ファ#', 'ソ', 'ソ#', 'ラ', 'ラ#', 'シ'];
-    //リストの何番目にnoteがあるか
-  index = notes.findIndex(n => n.note === note);
+    index = notes.findIndex(n => n.note === note);
     return doremi[index];
   }
 
@@ -158,7 +222,6 @@ const App = () => {
     const scaleNotes = getScaleNotes(selectedKey);
     const index = scaleNotes.indexOf(note);
     if (scaleType === 'major') {
-      
       if (index == 1 || index == 2 || index == 5){
         return sounds[note + "m"];
       }
@@ -183,7 +246,6 @@ const App = () => {
     const scaleNotes = getScaleNotes(selectedKey);
     const index = scaleNotes.indexOf(note);
     if (scaleType === 'major') {
-      
       if (index == 1 || index == 2 || index == 5){
         return [0, 3, 7].map(interval => 
         notes[(keyIndex + interval) % 12].note
@@ -207,12 +269,7 @@ const App = () => {
       );
       }
     }
-  };
-
-  const is_note_in_constituent = (note) => {
-     return highlightedNotes.includes(note); 
-  };
-
+  }; const is_note_in_constituent = (note) => { return highlightedNotes.includes(note); };
   const playSound = async (note) => {
     if (sound) {
       await sound.unloadAsync();
@@ -223,33 +280,32 @@ const App = () => {
     
     const constituents = get_constituents(note);
     setHighlightedNotes(constituents);
-  if (timerRef.current) {
+    if (timerRef.current) {
       clearTimeout(timerRef.current);
       console.log("Timer cleared");
     }
 
-    // 新しいタイマーを設定
     timerRef.current = setTimeout(() => {
       setHighlightedNotes([]);
       console.log("Highlighted notes cleared");
-    }, 2000); // 2000ms (2秒)
+    }, 2000);
   }
 
   const getNoteBackgroundColor = (note) => {
     if (selectedKey === note || isNoteInScale(note)) {
       return notes.find(n => n.note === note)?.color || '#FFF';
     }
-    return '#333'; // Dark color for non-selected notes
+    return '#333';
   };
 
   const getborderColor = (note) => {
     if (highlightedNotes.includes(note)) {
-      return '#FFFF00'; // Highlight color for constituents
+      return '#FFFF00';
     }
     if (selectedKey === note || isNoteInScale(note)) {
-      return '#FFF'; // Light color for selected notes
+      return '#FFF';
     }
-    return '#FFF'; // Dark color for non-selected notes
+    return '#FFF';
   };
 
   const confirmKey = () => {
@@ -258,7 +314,7 @@ const App = () => {
 
   const rolekey = () => {
     setRolekey(prevIndex => (prevIndex + 1) % roles.length);
-    };
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -282,7 +338,6 @@ const App = () => {
         </Text>
       </TouchableOpacity>
 
-      {/* Scale Type Selection */}
       <View style={styles.scaleTypeContainer}>
         <TouchableOpacity 
           style={[styles.scaleTypeButton, scaleType === 'major' && styles.selectedScaleTypeButton]}
@@ -298,7 +353,6 @@ const App = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Circular Chart */}
       <View style={styles.chartContainer}>
         <View style={styles.circle} />
         {notes.map((note, index) => {
@@ -306,55 +360,55 @@ const App = () => {
           const x = radius * Math.cos(angle);
           const y = radius * Math.sin(angle);
           return (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.note,
-                {
-                  transform: [
-                    { translateX: x },
-                    { translateY: y },
-                  ],
-                  backgroundColor: getNoteBackgroundColor(note.note),
-                  borderColor: getborderColor(note.note),
-                  borderWidth: selectedKey === note.note || isNoteInScale(note.note) || is_note_in_constituent(note.note) ? 4 : 0,
-                },
-              ]}
-               onPress={() => {
-                if (!confirmedKey){
-                  setSelectedKey(note.note);
-                }
-                if (confirmedKey) {
-                
-                playSound(note.note); // confirmedKey が true のときのみ音を鳴らす
-                }
-              }}    
-              //disabled={confirmedKey}
-            >
 
+<Animated.View
+  key={index}
+  {...panResponders[index].panHandlers}
+  style={[
+    styles.note,
+    {
+      transform: [
+        { translateX: x },
+        { translateY: y },
+        { scale: draggedNote === note.note ? 1.2 : 1 },
+      ],
+      backgroundColor: getNoteBackgroundColor(note.note),
+      borderColor: getborderColor(note.note),
+      borderWidth: selectedKey === note.note || isNoteInScale(note.note) || is_note_in_constituent(note.note) ? 4 : 0,
+    },
+  ]}
+>
+<View>
   <Text style={styles.noteText}>
-    {roleKey === 0 
-      ? note.note 
+    {roleKey === 0
+      ? (draggedNote === note.note
+          ? dragDistance < 50
+            ? note.note
+            : dragDistance < 100
+              ? note.note + '7th'
+              : dragDistance < 150
+                ? note.note + 'add9'
+                : note.note + 'sus4'
+          : note.note)  // draggedNote !== note.note の場合はそのまま note.note を表示
       : roleKey === 1 
         ? getDegree(note.note) 
         : roleKey === 2
           ? getNoteRole(note.note)
           : getdoremi(note.note)}
-
   </Text>
-            </TouchableOpacity>
-          );
+</View>
+
+</Animated.View>
+         );
         })}
       </View>
 
-      {/* Selected Key Info */}
       <View style={styles.keyInfoContainer}>
         <Text style={styles.keyInfoText}>
           {selectedKey ? `Selected Key: ${selectedKey}` : 'Tap a note to select a key'}
         </Text>
       </View>
 
-      {/* Scale Notes */}
       {selectedKey && (
         <View style={styles.scaleContainer}>
           <Text style={styles.scaleTitle}>{scaleType} Scale Notes:</Text>
@@ -366,11 +420,18 @@ const App = () => {
         </View>
       )}
 
-      {/* BPM */}
       <View style={styles.bpmContainer}>
         <Text style={styles.bpmLabel}>BPM</Text>
-        <Text style={styles.bpmValue}>120</Text>
+<Text style={styles.bpmValue}>120</Text>
       </View>
+
+      {draggedNote && (
+        <View style={styles.dragIndicator}>
+          <Text style={styles.dragIndicatorText}>
+            {dragDistance < 50 ? '' : dragDistance < 100 ? '7th' : dragDistance > 150 ?'add9' :'sus4' }
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -558,8 +619,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
-}
-);
+  dragIndicator: {
+    position: 'absolute',
+    bottom: 450,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    padding: 10,
+    borderRadius: 10,
+  },
+  dragIndicatorText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+});
 
 export default App;
-
