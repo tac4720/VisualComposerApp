@@ -96,7 +96,82 @@ const sounds = {
   'GM7': require('../../assets/sounds/GM7.wav'),
   'Gsus4': require('../../assets/sounds/Gsus4-1.wav'),
 };
-
+/*
+const sounds = {
+  'A#-Bb': require('../../assets/sounds/A#.wav'),
+  'A#-Bb7': require('../../assets/sounds/A#7.wav'),
+  'A#-Bbadd9': require('../../assets/sounds/A#add9.wav'),
+  'A#-Bbm': require('../../assets/sounds/A#m.wav'),
+  'A#-BbM7': require('../../assets/sounds/A#M7.wav'),
+  'A#-Bbsus4': require('../../assets/sounds/A#sus4.wav'),
+  'A': require('../../assets/sounds/A.wav'),
+  'A7': require('../../assets/sounds/A7.wav'),
+  'Aadd9': require('../../assets/sounds/Aadd9.wav'),
+  'Am': require('../../assets/sounds/Am.wav'),
+  'AM7': require('../../assets/sounds/AM7.wav'),
+  'Asus4': require('../../assets/sounds/Asus4.wav'),
+  'B': require('../../assets/sounds/B.wav'),
+  'B7': require('../../assets/sounds/B7.wav'),
+  'Badd9': require('../../assets/sounds/Badd9.wav'),
+  'Bm': require('../../assets/sounds/Bm.wav'),
+  'BM7': require('../../assets/sounds/BM7.wav'),
+  'Bsus4': require('../../assets/sounds/Bsus4.wav'),
+  'C#-Db': require('../../assets/sounds/C#.wav'),
+  'C#-Db7': require('../../assets/sounds/C#7.wav'),
+  'C#-Dbadd9': require('../../assets/sounds/C#add9.wav'),
+  'C#-Dbm': require('../../assets/sounds/C#m.wav'),
+  'C#-DbM7': require('../../assets/sounds/C#M7.wav'),
+  'C#-Dbsus4': require('../../assets/sounds/C#sus4.wav'),
+  'C': require('../../assets/sounds/C.wav'),
+  'C7': require('../../assets/sounds/C7.wav'),
+  'Cadd9': require('../../assets/sounds/Cadd9.wav'),
+  'Cm': require('../../assets/sounds/Cm.wav'),
+  'CM7': require('../../assets/sounds/CM7.wav'),
+  'Csus4': require('../../assets/sounds/Csus4.wav'),
+  'D#-Eb': require('../../assets/sounds/D#.wav'),
+  'D#-Eb7': require('../../assets/sounds/D#7.wav'),
+  'D#-Ebadd9': require('../../assets/sounds/D#add9.wav'),
+  'D#-Ebm': require('../../assets/sounds/D#m.wav'),
+  'D#-EbM7': require('../../assets/sounds/D#M7.wav'),
+  'D#-Ebsus4': require('../../assets/sounds/D#sus4.wav'),
+  'D': require('../../assets/sounds/D-1.wav'),
+  'D7': require('../../assets/sounds/D7.wav'),
+  'Dadd9': require('../../assets/sounds/Dadd9.wav'),
+  'Dm': require('../../assets/sounds/Dm.wav'),
+  'DM7': require('../../assets/sounds/DM7.wav'),
+  'Dsus4': require('../../assets/sounds/Dsus4.wav'),
+  'E': require('../../assets/sounds/E.wav'),
+  'E7': require('../../assets/sounds/E7.wav'),
+  'Eadd9': require('../../assets/sounds/Eadd9.wav'),
+  'Em': require('../../assets/sounds/Em.wav'),
+  'EM7': require('../../assets/sounds/EM7.wav'),
+  'Esus4': require('../../assets/sounds/Esus4.wav'),
+  'F#-Gb': require('../../assets/sounds/F#.wav'),
+  'F#-Gb7': require('../../assets/sounds/F#7.wav'),
+  'F#-Gbadd9': require('../../assets/sounds/F#add9.wav'),
+  'F#-Gbm': require('../../assets/sounds/F#m.wav'),
+  'F#-GbM7': require('../../assets/sounds/F#M7.wav'),
+  'F#-Gbsus4': require('../../assets/sounds/F#sus4.wav'),
+  'F': require('../../assets/sounds/F.wav'),
+  'F7': require('../../assets/sounds/F7.wav'),
+  'Fadd9': require('../../assets/sounds/Fadd9.wav'),
+  'Fm': require('../../assets/sounds/Fm.wav'),
+  'FM7': require('../../assets/sounds/FM7.wav'),
+  'Fsus4': require('../../assets/sounds/Fsus4.wav'),
+  'G#-Ab': require('../../assets/sounds/G#.wav'),
+  'G#-Ab7': require('../../assets/sounds/G#7.wav'),
+  'G#-Abadd9': require('../../assets/sounds/G#add9.wav'),
+  'G#-Abm': require('../../assets/sounds/G#m.wav'),
+  'G#-AbM7': require('../../assets/sounds/G#M7.wav'),
+  'G#-Absus4': require('../../assets/sounds/G#sus4.wav'),
+  'G': require('../../assets/sounds/G.wav'),
+  'G7': require('../../assets/sounds/G7.wav'),
+  'Gadd9': require('../../assets/sounds/Gadd9.wav'),
+  'Gm': require('../../assets/sounds/Gm.wav'),
+  'GM7': require('../../assets/sounds/GM7.wav'),
+  'Gsus4': require('../../assets/sounds/Gsus4-1.wav'),
+};
+*/
 const App = () => {
   const roles = ['Mode One', 'Mode Two', 'Mode Three', 'Mode Four'];
   const [selectedKey, setSelectedKey] = useState('C');
@@ -123,7 +198,16 @@ const App = () => {
     }
     dragDistanceRef.current = dragDistance;
     confirmedKeyRef.current = confirmedKey;
-  }, [draggedNote, dragDistance, confirmedKey]);
+  }, [draggedNote, dragDistance, confirmedKey],);
+
+  
+  useEffect(() => {
+    return () => {
+      if (sound) {
+        sound.unloadAsync().catch(error => console.error('Error unloading sound:', error));
+      }
+    };
+  }, [sound]);
 
 function createPanResponder(note) {
     return PanResponder.create({
