@@ -184,21 +184,18 @@ const App = () => {
   const [draggedNote, setDraggedNote] = useState('');
   const [dragDistance, setDragDistance] = useState(0);
   const panResponders = useRef(notes.map(note => createPanResponder(note.note))).current;
-
+  const [chordprogression, setChordprogression] = useState(['C','G','Am','Em','F','C','Dm','G']);
+  const [isplaychordprogession, setisPlaychordprogession] = useState(false);
   const dragDistanceRef = useRef(dragDistance);
   const confirmedKeyRef = useRef(confirmedKey);
 
   useEffect(() => {
-    if (draggedNote) {
-      console.log(`Dragged Note: ${draggedNote}`);
-    }
-
     if (dragDistance > 0) {
       console.log(`Drag Distance: ${dragDistance}`);
     }
     dragDistanceRef.current = dragDistance;
     confirmedKeyRef.current = confirmedKey;
-  }, [draggedNote, dragDistance, confirmedKey],);
+  }, [dragDistance, confirmedKey, isplaychordprogession],);
 
   
   useEffect(() => {
@@ -374,6 +371,22 @@ function createPanResponder(note) {
       console.log("Highlighted notes cleared");
     }, 2000);
   }
+  
+  const playchordprogession = async () => {
+    //`１秒おきに`
+    for (times = 0; times < 5; times++) {
+    for (i = 0; i < chordprogression.length; i++) {
+      const note = chordprogression[i];
+      playSound(note);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+    }
+    }
+  }
+
+  const SetisPlaychordprogession = () => {
+    setisPlaychordprogession(prevState => !prevState);
+      playchordprogession();
+  }
 
   const getNoteBackgroundColor = (note) => {
     if (selectedKey === note || isNoteInScale(note)) {
@@ -505,8 +518,9 @@ function createPanResponder(note) {
       )}
 
       <View style={styles.bpmContainer}>
-        <Text style={styles.bpmLabel}>BPM</Text>
-<Text style={styles.bpmValue}>120</Text>
+        <TouchableOpacity style={styles.bpmButton} onPress={SetisPlaychordprogession}>
+        <Text style={styles.bpmValue}>{chordprogression}</Text>
+        </TouchableOpacity>
       </View>
 
       {draggedNote && (
