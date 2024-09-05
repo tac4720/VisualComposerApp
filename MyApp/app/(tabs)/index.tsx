@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Dimensions, SafeAreaView, TouchableOpacity, Pan
 import { Audio } from 'expo-av';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
+import { getScaleNotes, getchord ,getDegree, getNoteRole, isNoteInScale, getdoremi, get_constituents, is_note_in_constituent } from '../../components/ScaleFunctions';
 import styles from '../../components/styles'; 
 
 const { width, height } = Dimensions.get('window');
@@ -24,156 +25,7 @@ const notes = [
   { note: 'B', color: '#FF8066' },
 ];
 
-const sounds = {
-  'A#-Bb': require('../../assets/sounds/A#-Bb.wav'),
-  'A#-Bb7': require('../../assets/sounds/A#-Bb7.wav'),
-  'A#-Bbadd9': require('../../assets/sounds/A#-Bbadd9.wav'),
-  'A#-Bbm': require('../../assets/sounds/A#-Bbm.wav'),
-  'A#-BbM7': require('../../assets/sounds/A#-BbM7.wav'),
-  'A#-Bbsus4': require('../../assets/sounds/A#-Bbsus4.wav'),
-  'A': require('../../assets/sounds/A.wav'),
-  'A7': require('../../assets/sounds/A7.wav'),
-  'Aadd9': require('../../assets/sounds/Aadd9.wav'),
-  'Am': require('../../assets/sounds/Am.wav'),
-  'AM7': require('../../assets/sounds/AM7.wav'),
-  'Asus4': require('../../assets/sounds/Asus4.wav'),
-  'B': require('../../assets/sounds/B.wav'),
-  'B7': require('../../assets/sounds/B7.wav'),
-  'Badd9': require('../../assets/sounds/Badd9.wav'),
-  'Bm': require('../../assets/sounds/Bm.wav'),
-  'BM7': require('../../assets/sounds/BM7.wav'),
-  'Bsus4': require('../../assets/sounds/Bsus4.wav'),
-  'C#-Db': require('../../assets/sounds/C#-Db.wav'),
-  'C#-Db7': require('../../assets/sounds/C#-Db7.wav'),
-  'C#-Dbadd9': require('../../assets/sounds/C#-Dbadd9.wav'),
-  'C#-Dbm': require('../../assets/sounds/C#-Dbm.wav'),
-  'C#-DbM7': require('../../assets/sounds/C#-DbM7.wav'),
-  'C#-Dbsus4': require('../../assets/sounds/C#-Dbsus4.wav'),
-  'C': require('../../assets/sounds/C.wav'),
-  'C7': require('../../assets/sounds/C7.wav'),
-  'Cadd9': require('../../assets/sounds/Cadd9.wav'),
-  'Cm': require('../../assets/sounds/Cm.wav'),
-  'CM7': require('../../assets/sounds/CM7.wav'),
-  'Csus4': require('../../assets/sounds/Csus4.wav'),
-  'D#-Eb': require('../../assets/sounds/D#-Eb.wav'),
-  'D#-Eb7': require('../../assets/sounds/D#-Eb7.wav'),
-  'D#-Ebadd9': require('../../assets/sounds/D#-Ebadd9.wav'),
-  'D#-Ebm': require('../../assets/sounds/D#-Ebm.wav'),
-  'D#-EbM7': require('../../assets/sounds/D#-EbM7.wav'),
-  'D#-Ebsus4': require('../../assets/sounds/D#-Ebsus4.wav'),
-  'D': require('../../assets/sounds/D-1.wav'),
-  'D7': require('../../assets/sounds/D7.wav'),
-  'Dadd9': require('../../assets/sounds/Dadd9.wav'),
-  'Dm': require('../../assets/sounds/Dm.wav'),
-  'DM7': require('../../assets/sounds/DM7.wav'),
-  'Dsus4': require('../../assets/sounds/Dsus4.wav'),
-  'E': require('../../assets/sounds/E.wav'),
-  'E7': require('../../assets/sounds/E7.wav'),
-  'Eadd9': require('../../assets/sounds/Eadd9.wav'),
-  'Em': require('../../assets/sounds/Em.wav'),
-  'EM7': require('../../assets/sounds/EM7.wav'),
-  'Esus4': require('../../assets/sounds/Esus4.wav'),
-  'F#-Gb': require('../../assets/sounds/F#-Gb.wav'),
-  'F#-Gb7': require('../../assets/sounds/F#-Gb7.wav'),
-  'F#-Gbadd9': require('../../assets/sounds/F#-Gbadd9.wav'),
-  'F#-Gbm': require('../../assets/sounds/F#-Gbm.wav'),
-  'F#-GbM7': require('../../assets/sounds/F#-GbM7.wav'),
-  'F#-Gbsus4': require('../../assets/sounds/F#-Gbsus4.wav'),
-  'F': require('../../assets/sounds/F.wav'),
-  'F7': require('../../assets/sounds/F7.wav'),
-  'Fadd9': require('../../assets/sounds/Fadd9.wav'),
-  'Fm': require('../../assets/sounds/Fm.wav'),
-  'FM7': require('../../assets/sounds/FM7.wav'),
-  'Fsus4': require('../../assets/sounds/Fsus4.wav'),
-  'G#-Ab': require('../../assets/sounds/G#-Ab.wav'),
-  'G#-Ab7': require('../../assets/sounds/G#-Ab7.wav'),
-  'G#-Abadd9': require('../../assets/sounds/G#-Abadd9.wav'),
-  'G#-Abm': require('../../assets/sounds/G#-Abm.wav'),
-  'G#-AbM7': require('../../assets/sounds/G#-AbM7.wav'),
-  'G#-Absus4': require('../../assets/sounds/G#-Absus4-1.wav'),
-  'G': require('../../assets/sounds/G.wav'),
-  'G7': require('../../assets/sounds/G7.wav'),
-  'Gadd9': require('../../assets/sounds/Gadd9.wav'),
-  'Gm': require('../../assets/sounds/Gm.wav'),
-  'GM7': require('../../assets/sounds/GM7.wav'),
-  'Gsus4': require('../../assets/sounds/Gsus4-1.wav'),
-};
-/*
-const sounds = {
-  'A#-Bb': require('../../assets/sounds/A#.wav'),
-  'A#-Bb7': require('../../assets/sounds/A#7.wav'),
-  'A#-Bbadd9': require('../../assets/sounds/A#add9.wav'),
-  'A#-Bbm': require('../../assets/sounds/A#m.wav'),
-  'A#-BbM7': require('../../assets/sounds/A#M7.wav'),
-  'A#-Bbsus4': require('../../assets/sounds/A#sus4.wav'),
-  'A': require('../../assets/sounds/A.wav'),
-  'A7': require('../../assets/sounds/A7.wav'),
-  'Aadd9': require('../../assets/sounds/Aadd9.wav'),
-  'Am': require('../../assets/sounds/Am.wav'),
-  'AM7': require('../../assets/sounds/AM7.wav'),
-  'Asus4': require('../../assets/sounds/Asus4.wav'),
-  'B': require('../../assets/sounds/B.wav'),
-  'B7': require('../../assets/sounds/B7.wav'),
-  'Badd9': require('../../assets/sounds/Badd9.wav'),
-  'Bm': require('../../assets/sounds/Bm.wav'),
-  'BM7': require('../../assets/sounds/BM7.wav'),
-  'Bsus4': require('../../assets/sounds/Bsus4.wav'),
-  'C#-Db': require('../../assets/sounds/C#.wav'),
-  'C#-Db7': require('../../assets/sounds/C#7.wav'),
-  'C#-Dbadd9': require('../../assets/sounds/C#add9.wav'),
-  'C#-Dbm': require('../../assets/sounds/C#m.wav'),
-  'C#-DbM7': require('../../assets/sounds/C#M7.wav'),
-  'C#-Dbsus4': require('../../assets/sounds/C#sus4.wav'),
-  'C': require('../../assets/sounds/C.wav'),
-  'C7': require('../../assets/sounds/C7.wav'),
-  'Cadd9': require('../../assets/sounds/Cadd9.wav'),
-  'Cm': require('../../assets/sounds/Cm.wav'),
-  'CM7': require('../../assets/sounds/CM7.wav'),
-  'Csus4': require('../../assets/sounds/Csus4.wav'),
-  'D#-Eb': require('../../assets/sounds/D#.wav'),
-  'D#-Eb7': require('../../assets/sounds/D#7.wav'),
-  'D#-Ebadd9': require('../../assets/sounds/D#add9.wav'),
-  'D#-Ebm': require('../../assets/sounds/D#m.wav'),
-  'D#-EbM7': require('../../assets/sounds/D#M7.wav'),
-  'D#-Ebsus4': require('../../assets/sounds/D#sus4.wav'),
-  'D': require('../../assets/sounds/D-1.wav'),
-  'D7': require('../../assets/sounds/D7.wav'),
-  'Dadd9': require('../../assets/sounds/Dadd9.wav'),
-  'Dm': require('../../assets/sounds/Dm.wav'),
-  'DM7': require('../../assets/sounds/DM7.wav'),
-  'Dsus4': require('../../assets/sounds/Dsus4.wav'),
-  'E': require('../../assets/sounds/E.wav'),
-  'E7': require('../../assets/sounds/E7.wav'),
-  'Eadd9': require('../../assets/sounds/Eadd9.wav'),
-  'Em': require('../../assets/sounds/Em.wav'),
-  'EM7': require('../../assets/sounds/EM7.wav'),
-  'Esus4': require('../../assets/sounds/Esus4.wav'),
-  'F#-Gb': require('../../assets/sounds/F#.wav'),
-  'F#-Gb7': require('../../assets/sounds/F#7.wav'),
-  'F#-Gbadd9': require('../../assets/sounds/F#add9.wav'),
-  'F#-Gbm': require('../../assets/sounds/F#m.wav'),
-  'F#-GbM7': require('../../assets/sounds/F#M7.wav'),
-  'F#-Gbsus4': require('../../assets/sounds/F#sus4.wav'),
-  'F': require('../../assets/sounds/F.wav'),
-  'F7': require('../../assets/sounds/F7.wav'),
-  'Fadd9': require('../../assets/sounds/Fadd9.wav'),
-  'Fm': require('../../assets/sounds/Fm.wav'),
-  'FM7': require('../../assets/sounds/FM7.wav'),
-  'Fsus4': require('../../assets/sounds/Fsus4.wav'),
-  'G#-Ab': require('../../assets/sounds/G#.wav'),
-  'G#-Ab7': require('../../assets/sounds/G#7.wav'),
-  'G#-Abadd9': require('../../assets/sounds/G#add9.wav'),
-  'G#-Abm': require('../../assets/sounds/G#m.wav'),
-  'G#-AbM7': require('../../assets/sounds/G#M7.wav'),
-  'G#-Absus4': require('../../assets/sounds/G#sus4.wav'),
-  'G': require('../../assets/sounds/G.wav'),
-  'G7': require('../../assets/sounds/G7.wav'),
-  'Gadd9': require('../../assets/sounds/Gadd9.wav'),
-  'Gm': require('../../assets/sounds/Gm.wav'),
-  'GM7': require('../../assets/sounds/GM7.wav'),
-  'Gsus4': require('../../assets/sounds/Gsus4-1.wav'),
-};
-*/
+
 const App = () => {
   const roles = ['Mode One', 'Mode Two', 'Mode Three', 'Mode Four'];
   const [selectedKey, setSelectedKey] = useState('C');
@@ -208,8 +60,8 @@ const App = () => {
     };
   }, [sound]);
 
-function createPanResponder(note) {
-    return PanResponder.create({
+  function createPanResponder(note) {
+      return PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onPanResponderGrant: () => {
           console.log(note);
@@ -243,128 +95,17 @@ function createPanResponder(note) {
             setDraggedNote('');
         },
     });
-}
-
-  const getScaleNotes = (key) => {
-    const keyIndex = notes.findIndex(note => note.note === key);
-
-    if (scaleType === 'major') {
-      return [0, 2, 4, 5, 7, 9, 11].map(interval => 
-        notes[(keyIndex + interval) % 12].note
-      );
-    }
-    else if (scaleType === 'minor') {
-      return [0, 2, 3, 5, 7, 8, 10].map(interval => 
-        notes[(keyIndex + interval) % 12].note
-      );
-    }
-  };
-
-  const isNoteInScale = (note) => {
-    if (!selectedKey) return false;
-    const scaleNotes = getScaleNotes(selectedKey);
-    return scaleNotes.includes(note);
-  };
-
-  const getNoteRole = (note) => {
-    if (!selectedKey) return false;  
-    const scaleNotes = getScaleNotes(selectedKey);
-    const index = scaleNotes.indexOf(note);
-    if (index == 0 || index == 2 || index == 5){
-      return "T";
-    }
-    else if (index == 4 || index == 6){
-      return "D";
-    }
-    else if (index == 1 || index == 3){
-      return "S";
-    }
-  };
-
-  const getDegree = (note) => {
-    if (!selectedKey) return false;
-    const scaleNotes = getScaleNotes(selectedKey);
-    index = scaleNotes.indexOf(note);
-    index = index + 1;
-    if (index == 0){
-      return "";
-    }
-    return index.toString();
   }
-
-  const getdoremi = (note) => {
-    if (!selectedKey) return false;
-    const doremi =
-      ['ド', 'ド#', 'レ', 'レ#', 'ミ', 'ファ', 'ファ#', 'ソ', 'ソ#', 'ラ', 'ラ#', 'シ'];
-    index = notes.findIndex(n => n.note === note);
-    return doremi[index];
-  }
-
-  const getchord = (note) => {
-    if (!selectedKey) return false;
-    const scaleNotes = getScaleNotes(selectedKey);
-    const index = scaleNotes.indexOf(note);
-    if (scaleType === 'major') {
-      if (index == 1 || index == 2 || index == 5){
-        return sounds[note + "m"];
-      }
-      else{
-        return sounds[note];
-      }
-    }
-    else if (scaleType === 'minor') {
-      if (index == 0 || index == 2 || index == 4){
-        return sounds[note + "m"];
-      }
-      else{
-        return sounds[note];
-      }
-    }
-  };
-
-  const get_constituents = (note) => {
-    const keyIndex = notes.findIndex(n => n.note === note);
-
-    if (!selectedKey) return false;
-    const scaleNotes = getScaleNotes(selectedKey);
-    const index = scaleNotes.indexOf(note);
-    if (scaleType === 'major') {
-      if (index == 1 || index == 2 || index == 5){
-        return [0, 3, 7].map(interval => 
-        notes[(keyIndex + interval) % 12].note
-      );
-       }
-      else{
-        return [0, 4, 7].map(interval => 
-        notes[(keyIndex + interval) % 12].note
-      );
-      }
-    }
-    else if (scaleType === 'minor') {
-      if (index == 0 || index == 2 || index == 4){
-        return [0, 3, 7].map(interval => 
-        notes[(keyIndex + interval) % 12].note
-      );
-      }
-      else{
-       return [0, 4, 7].map(interval => 
-        notes[(keyIndex + interval) % 12].note
-      );
-      }
-    }
-  };
-
-  const is_note_in_constituent = (note) => { return highlightedNotes.includes(note); };
-  
+ 
   const playSound = async (note) => {
     if (sound) {
       await sound.unloadAsync();
     }
-    const { sound: newSound } = await Audio.Sound.createAsync(getchord(note));
+    const { sound: newSound } = await Audio.Sound.createAsync(getchord(note,selectedKey, scaleType));
     setSound(newSound);
     await newSound.playAsync();
     
-    const constituents = get_constituents(note);
+    const constituents = get_constituents(note, selectedKey, scaleType);
     setHighlightedNotes(constituents);
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -394,7 +135,7 @@ function createPanResponder(note) {
   }
 
   const getNoteBackgroundColor = (note) => {
-    if (selectedKey === note || isNoteInScale(note)) {
+    if (selectedKey === note || isNoteInScale(note, selectedKey)) {
       return notes.find(n => n.note === note)?.color || '#FFF';
     }
     return '#333';
@@ -404,7 +145,7 @@ function createPanResponder(note) {
     if (highlightedNotes.includes(note)) {
       return '#FFFF00';
     }
-    if (selectedKey === note || isNoteInScale(note)) {
+    if (selectedKey === note || isNoteInScale(note, selectedKey)) {
       return '#FFF';
     }
     return '#FFF';
@@ -476,7 +217,7 @@ function createPanResponder(note) {
       ],
       backgroundColor: getNoteBackgroundColor(note.note),
       borderColor: getborderColor(note.note),
-      borderWidth: selectedKey === note.note || isNoteInScale(note.note) || is_note_in_constituent(note.note) ? 4 : 0,
+      borderWidth: selectedKey === note.note || isNoteInScale(note.note, selectedKey) || is_note_in_constituent(note.note, highlightedNotes) ? 4 : 0,
     },
   ]}
 >
@@ -493,10 +234,10 @@ function createPanResponder(note) {
                 : note.note + 'sus4'
           : note.note)  // draggedNote !== note.note の場合はそのまま note.note を表示
       : roleKey === 1 
-        ? getDegree(note.note) 
+        ? getDegree(note.note,selectedKey,scaleType) 
         : roleKey === 2
-          ? getNoteRole(note.note)
-          : getdoremi(note.note)}
+          ? getNoteRole(note.note,selectedKey,scaleType)
+          : getdoremi(note.note,selectedKey)}
   </Text>
 </View>
 
@@ -515,7 +256,7 @@ function createPanResponder(note) {
         <View style={styles.scaleContainer}>
           <Text style={styles.scaleTitle}>{scaleType} Scale Notes:</Text>
           <View style={styles.scaleNotesContainer}>
-            {getScaleNotes(selectedKey).map((note, index) => (
+            {getScaleNotes(selectedKey, scaleType).map((note, index) => (
               <Text key={index} style={styles.scaleNote}>{note}</Text>
             ))}
           </View>
