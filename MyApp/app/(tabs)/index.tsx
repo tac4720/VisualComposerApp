@@ -48,10 +48,12 @@ const App = () => {
       console.log(`Drag Distance: ${dragDistance}`);
     }
     dragDistanceRef.current = dragDistance;
-    confirmedKeyRef.current = confirmedKey;
-  }, [dragDistance, confirmedKey, isplaychordprogession],);
+  }, [dragDistance]);
 
-  
+  useEffect(() => {
+    confirmedKeyRef.current = confirmedKey;
+  }, [confirmedKey]);
+
   useEffect(() => {
     return () => {
       if (sound) {
